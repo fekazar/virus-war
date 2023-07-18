@@ -23,7 +23,11 @@ public class TelegramListener {
 
                 try {
                     updateHandler.handle(update, serviceAnswer -> {
-                        bot.execute(new SendMessage(update.message().chat().id(), serviceAnswer.message()));
+                        var msg = new SendMessage(update.message().chat().id(), serviceAnswer.message());
+                        if (serviceAnswer.reply() != null)
+                            msg.replyMarkup(serviceAnswer.reply());
+
+                        bot.execute(msg);
                     });
                 } catch (Exception e) {
                     log.error(e.getMessage());

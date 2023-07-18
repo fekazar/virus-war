@@ -1,4 +1,6 @@
 package edu.bots.viruswar.model;
 
-public record ServiceAnswer(String message, boolean withForceReply) {
+import com.pengrad.telegrambot.model.request.Keyboard;
+
+public record ServiceAnswer(String message, Keyboard reply) {
 }

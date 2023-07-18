@@ -20,9 +20,9 @@ public class StartCommandHandler implements CommandHandler {
             player.setId(playerId);
             playerRepository.save(player);
 
-            return new ServiceAnswer("Welcome, new player!", false);
+            return new ServiceAnswer("Welcome, new player!", null);
         }
 
-        return new ServiceAnswer("Welcome, old player", false);
+        return new ServiceAnswer("Welcome, old player", null);
     }
 }

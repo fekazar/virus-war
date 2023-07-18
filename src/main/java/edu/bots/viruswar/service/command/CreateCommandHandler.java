@@ -17,7 +17,7 @@ public class CreateCommandHandler implements CommandHandler {
     public ServiceAnswer handle(Long playerId, String command) {
         var sessionOpt = sessionRepository.findByPlayerId(playerId);
         if (sessionOpt.isPresent()) {
-            return new ServiceAnswer("You already have an active session. Id: " + sessionOpt.get().getSessionId(), false);
+            return new ServiceAnswer("You already have an active session. Id: " + sessionOpt.get().getSessionId(), null);
         }
 
         var session = new Session();
@@ -26,6 +26,6 @@ public class CreateCommandHandler implements CommandHandler {
 
         session = sessionRepository.save(session);
 
-        return new ServiceAnswer("You session: " + session.getSessionId(), false);
+        return new ServiceAnswer("You session: " + session.getSessionId(), null);
     }
 }
