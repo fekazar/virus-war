@@ -17,9 +17,7 @@ public class TelegramListener {
 
         this.bot.setUpdatesListener(updates -> {
             for (var update: updates) {
-                updateHandler.handle(update, msg -> {
-                    bot.execute(new SendMessage(update.message().chat().id(), msg));
-                });
+                updateHandler.handle(update, bot::execute);
             }
 
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
