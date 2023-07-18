@@ -13,11 +13,11 @@ public class StartCommandHandler implements CommandHandler {
     }
 
     @Override
-    public ServiceAnswer handle(Long userId, String command) {
-        var playerOpt = playerRepository.findById(userId);
+    public ServiceAnswer handle(Long playerId, String command) {
+        var playerOpt = playerRepository.findById(playerId);
         if (playerOpt.isEmpty()) {
             var player = new Player();
-            player.setId(userId);
+            player.setId(playerId);
             playerRepository.save(player);
 
             return new ServiceAnswer("Welcome, new player!", false);

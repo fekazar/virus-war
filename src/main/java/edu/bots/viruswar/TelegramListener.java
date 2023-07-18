@@ -26,6 +26,7 @@ public class TelegramListener {
                         bot.execute(new SendMessage(update.message().chat().id(), serviceAnswer.message()));
                     });
                 } catch (Exception e) {
+                    log.error(e.getMessage());
                     bot.execute(new SendMessage(update.message().chat().id(), "Internal error"));
                 }
             }
