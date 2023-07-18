@@ -42,12 +42,12 @@ public class UpdateHandler {
         var msg = update.message().text();
         var com = msg.substring(comEntity.offset(), comEntity.length());
 
-        log.info("Command: " + com);
-
         var handler = commandHandlers.get(com);
 
-        if (handler == null)
+        if (handler == null) {
+            log.info("No handler found for " + com);
             return Optional.empty();
+        }
 
         return Optional.ofNullable(handler.handle(update.message().from().id(), com));
     }
