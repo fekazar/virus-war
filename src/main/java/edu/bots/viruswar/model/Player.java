@@ -20,6 +20,7 @@ public class Player {
     private State state;
 
     public enum State {
-        DEFAULT
+        DEFAULT,
+        AWAITS_DELETE_ID;
     }
 }

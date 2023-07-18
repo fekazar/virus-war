@@ -1,9 +1,12 @@
 package edu.bots.viruswar;
 
 import com.pengrad.telegrambot.TelegramBot;
+import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
 import edu.bots.viruswar.service.command.*;
+import edu.bots.viruswar.service.state.AwaitDeleteStateHandler;
+import edu.bots.viruswar.service.state.StateHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +27,15 @@ public class Config {
                 "/ping", new PingCommandHandler(),
                 "/start", new StartCommandHandler(playerRepository),
                 "/create", new CreateCommandHandler(sessionRepository),
-                "/delete", new DeleteCommandHandler()
+                "/delete", new DeleteCommandHandler(playerRepository, sessionRepository)
+        );
+    }
+
+    @Bean
+    public Map<Player.State, StateHandler> getStateHandlers(PlayerRepository playerRepository,
+                                                            SessionRepository sessionRepository) {
+        return Map.of(
+                Player.State.AWAITS_DELETE_ID, new AwaitDeleteStateHandler(sessionRepository, playerRepository)
         );
     }
 }
