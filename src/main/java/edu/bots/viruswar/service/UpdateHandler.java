@@ -27,7 +27,7 @@ public class UpdateHandler {
     }
 
     private Optional<ServiceAnswer> handleCommand(Update update) {
-        if (update.message() == null)
+        if (update.message() == null || update.message().entities() == null)
             return Optional.empty();
 
         var commandOpt = Arrays.stream(update.message().entities())
