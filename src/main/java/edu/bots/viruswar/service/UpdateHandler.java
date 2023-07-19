@@ -29,13 +29,10 @@ public class UpdateHandler {
     }
 
     public void handle(Update update, Consumer<ServiceAnswer> onAnswer) {
-        onAnswer.accept(handleCommand(update).get());
-        //onAnswer.accept(new ServiceAnswer("Not implemented yet.", false));
-    }
+        if (update.message() == null) {
+            return;
+        }
 
-    private Optional<ServiceAnswer> handleCommand(Update update) {
-        if (update.message() == null)
-            return Optional.empty();
         var msg = update.message().text().trim();
 
         Optional<MessageEntity> commandOpt = update.message().entities() == null ? Optional.empty() : Arrays.stream(update.message().entities())
@@ -51,23 +48,22 @@ public class UpdateHandler {
             if (handler == null) {
                 log.info("No command handler found for " + com);
             } else {
-                return Optional.ofNullable(handler.handle(update.message().from().id(), msg));
+                handler.handle(update.message().from().id(), msg, onAnswer);
+                return;
             }
         } else {
             log.info("No command present.");
         }
-
-        // TODO: remove state logic from this method!!!
 
         var state = playerRepository.getState(update.message().from().id());
         var stateHandler = stateHandlers.get(state);
 
         if (stateHandler == null) {
             log.info("No state handler found for " + state);
-            return Optional.empty();
+            throw new RuntimeException("No handlers found for this action.");
         } else {
             log.info("Found handler for " + state);
-            return Optional.ofNullable(stateHandler.handle(update.message().from().id(), msg));
+            stateHandler.handle(update.message().from().id(), msg, onAnswer);
         }
     }
 }

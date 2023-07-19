@@ -2,6 +2,8 @@ package edu.bots.viruswar.service.command;
 
 import edu.bots.viruswar.model.ServiceAnswer;
 
+import java.util.function.Consumer;
+
 public interface CommandHandler {
-    ServiceAnswer handle(Long playerId, String command);
+    void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer);
 }

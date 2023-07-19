@@ -2,6 +2,8 @@ package edu.bots.viruswar.service.state;
 
 import edu.bots.viruswar.model.ServiceAnswer;
 
+import java.util.function.Consumer;
+
 public interface StateHandler {
-    ServiceAnswer handle(Long playerId, String msg);
+    void handle(Long playerId, String msg, Consumer<ServiceAnswer> onAnswer);
 }

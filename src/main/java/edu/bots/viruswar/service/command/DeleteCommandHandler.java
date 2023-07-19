@@ -6,6 +6,8 @@ import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
 
+import java.util.function.Consumer;
+
 public class DeleteCommandHandler implements CommandHandler {
     private final PlayerRepository playerRepository;
     private final SessionRepository sessionRepository;
@@ -16,15 +18,17 @@ public class DeleteCommandHandler implements CommandHandler {
     }
 
     @Override
-    public ServiceAnswer handle(Long playerId, String command) {
+    public void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer) {
         var sessionOpt = sessionRepository.findByPlayerId(playerId);
-        if (sessionOpt.isEmpty())
-            return new ServiceAnswer("You don't have a session with this id.", null);
+        if (sessionOpt.isEmpty()) {
+            onAnswer.accept(new ServiceAnswer("You don't have a session with this id.", playerId, null));
+            return;
+        }
 
         var player = playerRepository.findById(playerId).get();
         player.setState(Player.State.AWAITS_DELETE_ID);
         playerRepository.save(player);
 
-        return new ServiceAnswer("Enter session id:", new ForceReply());
+        onAnswer.accept(new ServiceAnswer("Enter session id:", playerId, new ForceReply()));
     }
 }

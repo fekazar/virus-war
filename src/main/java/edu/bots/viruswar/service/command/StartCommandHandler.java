@@ -5,6 +5,8 @@ import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
 
+import java.util.function.Consumer;
+
 public class StartCommandHandler implements CommandHandler {
     private final PlayerRepository playerRepository;
 
@@ -13,16 +15,17 @@ public class StartCommandHandler implements CommandHandler {
     }
 
     @Override
-    public ServiceAnswer handle(Long playerId, String command) {
+    public void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer) {
         var playerOpt = playerRepository.findById(playerId);
         if (playerOpt.isEmpty()) {
             var player = new Player();
             player.setId(playerId);
             playerRepository.save(player);
 
-            return new ServiceAnswer("Welcome, new player!", null);
+            onAnswer.accept(new ServiceAnswer("Welcome, new player!", playerId, null));
+            return;
         }
 
-        return new ServiceAnswer("Welcome, old player", null);
+        onAnswer.accept(new ServiceAnswer("Welcome, old player", playerId, null));
     }
 }
