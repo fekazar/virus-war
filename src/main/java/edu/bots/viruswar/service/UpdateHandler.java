@@ -56,6 +56,7 @@ public class UpdateHandler {
         }
 
         var state = playerRepository.getState(update.message().from().id());
+        log.info("state: " + state);
         var stateHandler = stateHandlers.get(state);
 
         if (stateHandler == null) {

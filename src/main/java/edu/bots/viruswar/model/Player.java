@@ -21,6 +21,8 @@ public class Player {
 
     public enum State {
         DEFAULT,
-        AWAITS_DELETE_ID;
+        AWAITS_DELETE_ID,
+        AWAITS_CONNECT_ID,
+        IN_GAME
     }
 }

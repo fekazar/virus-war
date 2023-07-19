@@ -20,6 +20,7 @@ public class StartCommandHandler implements CommandHandler {
         if (playerOpt.isEmpty()) {
             var player = new Player();
             player.setId(playerId);
+            player.setState(Player.State.DEFAULT);
             playerRepository.save(player);
 
             onAnswer.accept(new ServiceAnswer("Welcome, new player!", playerId, null));

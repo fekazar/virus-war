@@ -5,6 +5,7 @@ import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
 import edu.bots.viruswar.service.command.*;
+import edu.bots.viruswar.service.state.AwaitConnectIdStateHandler;
 import edu.bots.viruswar.service.state.AwaitDeleteStateHandler;
 import edu.bots.viruswar.service.state.StateHandler;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +28,8 @@ public class Config {
                 "/ping", new PingCommandHandler(),
                 "/start", new StartCommandHandler(playerRepository),
                 "/create", new CreateCommandHandler(sessionRepository),
-                "/delete", new DeleteCommandHandler(playerRepository, sessionRepository)
+                "/delete", new DeleteCommandHandler(playerRepository, sessionRepository),
+                "/connect", new ConnectCommandHandler(playerRepository, sessionRepository)
         );
     }
 
@@ -35,7 +37,8 @@ public class Config {
     public Map<Player.State, StateHandler> getStateHandlers(PlayerRepository playerRepository,
                                                             SessionRepository sessionRepository) {
         return Map.of(
-                Player.State.AWAITS_DELETE_ID, new AwaitDeleteStateHandler(sessionRepository, playerRepository)
+                Player.State.AWAITS_DELETE_ID, new AwaitDeleteStateHandler(sessionRepository, playerRepository),
+                Player.State.AWAITS_CONNECT_ID, new AwaitConnectIdStateHandler(playerRepository, sessionRepository)
         );
     }
 }

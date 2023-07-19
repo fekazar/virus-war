@@ -19,11 +19,9 @@ public class TelegramListener {
 
         this.bot.setUpdatesListener(updates -> {
             for (var update: updates) {
-                log.info(String.valueOf(update));
-
                 try {
                     updateHandler.handle(update, serviceAnswer -> {
-                        var msg = new SendMessage(update.message().chat().id(), serviceAnswer.message());
+                        var msg = new SendMessage(serviceAnswer.sendTo(), serviceAnswer.message());
                         if (serviceAnswer.reply() != null)
                             msg.replyMarkup(serviceAnswer.reply());
 
@@ -31,7 +29,7 @@ public class TelegramListener {
                     });
                 } catch (Exception e) {
                     log.error(e.getMessage());
-                    bot.execute(new SendMessage(update.message().chat().id(), "Internal error"));
+                    bot.execute(new SendMessage(update.message().from().id(), "Internal error"));
                 }
             }
 
