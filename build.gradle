@@ -24,6 +24,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok:1.18.28'
 	annotationProcessor 'org.projectlombok:lombok:1.18.28'
 
+	testImplementation 'com.h2database:h2:2.2.220'
 	testCompileOnly 'org.projectlombok:lombok:1.18.28'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
