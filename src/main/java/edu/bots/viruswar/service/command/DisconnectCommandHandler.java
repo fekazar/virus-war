@@ -1,18 +1,16 @@
 package edu.bots.viruswar.service.command;
 
-import com.pengrad.telegrambot.model.request.ForceReply;
-import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
 
 import java.util.function.Consumer;
 
-public class DeleteCommandHandler implements CommandHandler {
+public class DisconnectCommandHandler implements CommandHandler {
     private final PlayerRepository playerRepository;
     private final SessionRepository sessionRepository;
 
-    public DeleteCommandHandler(PlayerRepository playerRepository, SessionRepository sessionRepository) {
+    public DisconnectCommandHandler(PlayerRepository playerRepository, SessionRepository sessionRepository) {
         this.playerRepository = playerRepository;
         this.sessionRepository = sessionRepository;
     }
@@ -21,14 +19,14 @@ public class DeleteCommandHandler implements CommandHandler {
     public void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer) {
         var sessionOpt = sessionRepository.findByPlayerId(playerId);
         if (sessionOpt.isEmpty()) {
-            onAnswer.accept(new ServiceAnswer("You don't have a session with this id.", playerId, null));
+            onAnswer.accept(new ServiceAnswer("You are not connected to any session", playerId, null));
             return;
         }
 
-        var player = playerRepository.findById(playerId).get();
-        player.setState(Player.State.AWAITS_DELETE_ID);
-        playerRepository.save(player);
+        // TODO: what is player is in game?
+        var session = sessionOpt.get();
+        sessionRepository.delete(session);
 
-        onAnswer.accept(new ServiceAnswer("Enter session id:", playerId, new ForceReply()));
+        onAnswer.accept(new ServiceAnswer("You've been disconnected from session.", playerId, null));
     }
 }
