@@ -66,8 +66,11 @@ public class GameUtils {
         return false;
     }
 
-    public boolean canTurn(char[][] field, char figure) {
-        var finder = new AvailableFinder(field, figure);
+    public boolean canTurn(Session session, char figure) {
+        if (session.getMove() <= maxOps)
+            return true;
+
+        var finder = new AvailableFinder(session.getMappedField(), figure);
         return finder.hasAvailable();
     }
 

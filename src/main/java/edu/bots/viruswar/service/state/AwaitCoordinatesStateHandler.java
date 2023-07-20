@@ -57,9 +57,23 @@ public class AwaitCoordinatesStateHandler implements StateHandler {
 
             onAnswer.accept(new ServiceAnswer("Current map:\n" + rendered, playerId, null));
 
-            if (!gameUtils.canTurn(session.getMappedField(), Figure.other(curPlayer.getPlaysWith()))) {
+            if (!gameUtils.canTurn(session, Figure.other(curPlayer.getPlaysWith()))) {
                 onAnswer.accept(new ServiceAnswer("You won! Session was deleted.", playerId, null));
                 onAnswer.accept(new ServiceAnswer("You lose! Session was deleted.", session.otherPlayer(playerId), null));
+
+                var otherPlayer = playerRepository.findById(session.otherPlayer(playerId)).get();
+
+                curPlayer.setState(Player.State.DEFAULT);
+                otherPlayer.setState(Player.State.DEFAULT);
+                sessionRepository.delete(session);
+
+                return;
+            }
+
+            // TODO: remove code repeat
+            if (!gameUtils.canTurn(session, curPlayer.getPlaysWith())) {
+                onAnswer.accept(new ServiceAnswer("You won! Session was deleted.", session.otherPlayer(playerId), null));
+                onAnswer.accept(new ServiceAnswer("You lose! Session was deleted.", playerId, null));
 
                 var otherPlayer = playerRepository.findById(session.otherPlayer(playerId)).get();
 
