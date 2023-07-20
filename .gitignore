@@ -1,4 +1,5 @@
 HELP.md
+bot*.db
 test*.db
 .gradle
 build/

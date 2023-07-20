@@ -2,7 +2,9 @@ package edu.bots.viruswar;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.*;
+import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
+import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
 import edu.bots.viruswar.service.UpdateHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +29,17 @@ public class ConnectionTest {
     @Autowired
     private SessionRepository sessionRepository;
 
+    @Autowired
+    private PlayerRepository playerRepository;
+
     @MockBean
     private TelegramBot bot;
 
     private final Consumer<ServiceAnswer> logAnswer = serviceAnswer -> {
         log.info("to: " + serviceAnswer.sendTo() + " " + serviceAnswer.message());
     };
+
+    private final Consumer<ServiceAnswer> devNull = serviceAnswer -> {};
 
     @Test
     @Order(1)
@@ -74,6 +81,46 @@ public class ConnectionTest {
         updateHandler.handle(sendCoords1, logAnswer);
         updateHandler.handle(sendCoords2, logAnswer);
         updateHandler.handle(sendCoords3, logAnswer);
+    }
+
+    @Test
+    void disconnectTest() {
+        var createHost = makeUpdate("/start", 4l, true);
+        var createSession = makeUpdate("/create", 4l, true);
+        var st = new ArrayList<String>();
+
+        updateHandler.handle(createHost, devNull);
+        updateHandler.handle(createSession, devNull.andThen(serviceAnswer -> st.add(serviceAnswer.message())));
+
+        // Session id has length 10
+        var sessionId = st.get(st.size() - 1).substring(st.get(st.size() - 1).length() - 10);
+        log.info("Session id: " + sessionId);
+
+        assertNotNull(sessionId);
+
+        var createClient = makeUpdate("/start", 5l, true);
+        var connectSession = makeUpdate("/connect", 5l, true);
+        var authSession = makeUpdate(sessionId, 5l, false);
+
+        updateHandler.handle(createClient, devNull);
+        updateHandler.handle(connectSession, devNull);
+        updateHandler.handle(authSession, devNull);
+
+        var createdSession = sessionRepository.findById(sessionId).get();
+        assertEquals(4, createdSession.getHostId());
+        assertEquals(5, createdSession.getClientId());
+
+        var disconnectClient = makeUpdate("/disconnect", 5l, true);
+        updateHandler.handle(disconnectClient, logAnswer);
+
+        var sessionOpt = sessionRepository.findById(sessionId);
+        assertTrue(sessionOpt.isEmpty());
+
+        var host = playerRepository.findById(createdSession.getHostId()).get();
+        var client = playerRepository.findById(createdSession.getClientId()).get();
+
+        assertEquals(Player.State.DEFAULT, host.getState());
+        assertEquals(Player.State.DEFAULT, client.getState());
     }
 
     private Update makeUpdate(String msg, Long from, boolean isCommand) {
