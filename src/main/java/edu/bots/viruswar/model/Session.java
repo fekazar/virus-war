@@ -32,4 +32,12 @@ public class Session {
 
     @Column(name = "field")
     private String field;
+
+    public Long otherPlayer(Long playerId) {
+        if (hostId.equals(playerId))
+            return clientId;
+        if (clientId.equals(playerId))
+            return hostId;
+        throw new IllegalStateException("There is no such player.");
+    }
 }

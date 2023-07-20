@@ -1,9 +1,6 @@
 package edu.bots.viruswar.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,10 +16,20 @@ public class Player {
     @Enumerated(EnumType.STRING)
     private State state;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "plays_with")
+    private Figure playsWith;
+
     public enum State {
         DEFAULT,
-        AWAITS_DELETE_ID,
         AWAITS_CONNECT_ID,
-        IN_GAME
+        IN_GAME,
+        AWAITS_OTHER_PLAYER,
+        AWAITS_COORDINATES
+    }
+
+    public enum Figure {
+        CROSS,
+        CIRCLE
     }
 }

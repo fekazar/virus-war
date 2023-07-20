@@ -1,5 +1,6 @@
 package edu.bots.viruswar.service.state;
 
+import com.pengrad.telegrambot.model.request.ForceReply;
 import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
@@ -40,8 +41,11 @@ public class AwaitConnectIdStateHandler implements StateHandler {
 
         // TODO: Concurrency???
         session.setClientId(client.getId());
-        host.setState(Player.State.IN_GAME);
-        client.setState(Player.State.IN_GAME);
+        host.setState(Player.State.AWAITS_COORDINATES);
+        client.setState(Player.State.AWAITS_OTHER_PLAYER);
+
+        host.setPlaysWith(Player.Figure.CROSS);
+        client.setPlaysWith(Player.Figure.CIRCLE);
 
         sessionRepository.save(session);
         playerRepository.save(host);
@@ -49,5 +53,6 @@ public class AwaitConnectIdStateHandler implements StateHandler {
 
         onAnswer.accept(new ServiceAnswer("You have connected to the session. Starting a game (not yet).", playerId, null));
         onAnswer.accept(new ServiceAnswer("Player has connected to the session. Starting a game (not yet).", host.getId(), null));
+        onAnswer.accept(new ServiceAnswer("Enter coordinates: ", host.getId(), new ForceReply()));
     }
 }

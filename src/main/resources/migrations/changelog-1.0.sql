@@ -3,7 +3,8 @@
 --changeset fyodor:init_tables
 CREATE TABLE IF NOT EXISTS players(
     id BIGINT PRIMARY KEY,
-    state VARCHAR(255)
+    state VARCHAR(255),
+    plays_with VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS sessions(
