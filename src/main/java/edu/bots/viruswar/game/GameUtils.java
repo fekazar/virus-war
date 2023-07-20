@@ -2,7 +2,9 @@ package edu.bots.viruswar.game;
 
 import edu.bots.viruswar.model.Figure;
 import edu.bots.viruswar.model.Session;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class GameUtils {
     // TODO: inject from properties
     private final int width;
@@ -157,18 +159,7 @@ public class GameUtils {
         }
 
         private boolean dfs(int y, int x) {
-            if (found)
-                return true;
-
-            if (used[y][x])
-                return false;
             used[y][x] = true;
-
-            if (field[y][x] == Figure.kill(figure))
-                return false;
-
-            if (field[y][x] == Figure.EMPTY || field[y][x] == Figure.other(figure))
-                return found = true;
 
             for (int dx = -1; dx <= 1; ++dx) {
                 for (int dy = -1; dy <= 1; ++dy) {
@@ -180,6 +171,16 @@ public class GameUtils {
 
                     if (nx < 0 || nx >= width || ny < 0 || ny >= height)
                         continue;
+
+                    if (used[ny][nx])
+                        continue;
+
+                    if (field[ny][nx] == Figure.kill(figure))
+                        continue;
+
+                    if (field[ny][nx] == Figure.EMPTY || field[ny][nx] == Figure.other(figure)) {
+                        return found = true;
+                    }
 
                     var res = dfs(ny, nx);
                     if (res)
