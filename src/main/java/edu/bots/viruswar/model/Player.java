@@ -14,22 +14,15 @@ public class Player {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private State state;
+    private State state = State.DEFAULT;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "plays_with")
-    private Figure playsWith;
+    private Character playsWith = null;
 
     public enum State {
         DEFAULT,
         AWAITS_CONNECT_ID,
-        IN_GAME,
         AWAITS_OTHER_PLAYER,
         AWAITS_COORDINATES
-    }
-
-    public enum Figure {
-        CROSS,
-        CIRCLE
     }
 }

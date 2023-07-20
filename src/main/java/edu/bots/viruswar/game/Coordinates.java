@@ -2,7 +2,7 @@ package edu.bots.viruswar.game;
 
 import java.util.Optional;
 
-public record Coordinates(long x, long y) {
+public record Coordinates(int x, int y) {
     public static Optional<Coordinates> parse(String s) {
         var spl = s.split(" ");
 
@@ -10,8 +10,8 @@ public record Coordinates(long x, long y) {
             return Optional.empty();
 
         try {
-            long x = spl[0].charAt(0) - 'a';
-            long y = Long.parseLong(spl[1]) - 1;
+            int x = spl[0].charAt(0) - 'a';
+            int y = Integer.parseInt(spl[1]) - 1;
 
             // TODO: inject field size from properties
             if (x > 9 || x < 0 || y > 10 || y < 0)

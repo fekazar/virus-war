@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS sessions(
     host_id BIGINT REFERENCES players (id),
     client_id BIGINT,
     move INTEGER NOT NULL DEFAULT 0,
-    field VARCHAR(255)
+    field VARCHAR(255) NOT NULL
 );
 
 --rollback DROP TABLE sessions;

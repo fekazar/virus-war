@@ -1,6 +1,8 @@
 package edu.bots.viruswar.service.state;
 
 import com.pengrad.telegrambot.model.request.ForceReply;
+import edu.bots.viruswar.game.GameUtils;
+import edu.bots.viruswar.model.Figure;
 import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
@@ -12,10 +14,12 @@ import java.util.function.Consumer;
 public class AwaitConnectIdStateHandler implements StateHandler {
     private final PlayerRepository playerRepository;
     private final SessionRepository sessionRepository;
+    private final GameUtils gameUtils;
 
-    public AwaitConnectIdStateHandler(PlayerRepository playerRepository, SessionRepository sessionRepository) {
+    public AwaitConnectIdStateHandler(PlayerRepository playerRepository, SessionRepository sessionRepository, GameUtils gameUtils) {
         this.playerRepository = playerRepository;
         this.sessionRepository = sessionRepository;
+        this.gameUtils = gameUtils;
     }
 
     @Transactional
@@ -41,11 +45,13 @@ public class AwaitConnectIdStateHandler implements StateHandler {
 
         // TODO: Concurrency???
         session.setClientId(client.getId());
+        session.setMappedField(gameUtils.getEmptyField());
+
         host.setState(Player.State.AWAITS_COORDINATES);
         client.setState(Player.State.AWAITS_OTHER_PLAYER);
 
-        host.setPlaysWith(Player.Figure.CROSS);
-        client.setPlaysWith(Player.Figure.CIRCLE);
+        host.setPlaysWith(Figure.CROSS);
+        client.setPlaysWith(Figure.CIRCLE);
 
         sessionRepository.save(session);
         playerRepository.save(host);

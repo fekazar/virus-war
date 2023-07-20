@@ -2,6 +2,8 @@ package edu.bots.viruswar.service.state;
 
 import com.pengrad.telegrambot.model.request.ForceReply;
 import edu.bots.viruswar.game.Coordinates;
+import edu.bots.viruswar.game.FieldRender;
+import edu.bots.viruswar.game.GameUtils;
 import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
@@ -12,12 +14,14 @@ import java.util.function.Consumer;
 public class AwaitCoordinatesStateHandler implements StateHandler {
     private final PlayerRepository playerRepository;
     private final SessionRepository sessionRepository;
+    private final GameUtils gameUtils;
 
     private final int maxOps = 3; // TODO: inject max ops from properties
 
-    public AwaitCoordinatesStateHandler(PlayerRepository playerRepository, SessionRepository sessionRepository) {
+    public AwaitCoordinatesStateHandler(PlayerRepository playerRepository, SessionRepository sessionRepository, GameUtils gameUtils) {
         this.playerRepository = playerRepository;
         this.sessionRepository = sessionRepository;
+        this.gameUtils = gameUtils;
     }
 
     @Override
@@ -40,23 +44,34 @@ public class AwaitCoordinatesStateHandler implements StateHandler {
         var curPlayer = playerRepository.findById(playerId).get();
 
         // for now there is no game logic...
-        session.setMove(session.getMove() + 1);
-        session = sessionRepository.save(session);
+        boolean hasTurned = gameUtils.update(coords, curPlayer.getPlaysWith(), session);
+        if (hasTurned) {
+            session.setMove(session.getMove() + 1);
+            session = sessionRepository.save(session);
 
-        if (session.getMove() % maxOps == 0) {
-            var otherPlayer = playerRepository.findById(session.otherPlayer(playerId)).get();
+            var rendered = FieldRender.render(session.getMappedField());
 
-            curPlayer.setState(Player.State.AWAITS_OTHER_PLAYER);
-            otherPlayer.setState(Player.State.AWAITS_COORDINATES);
+            onAnswer.accept(new ServiceAnswer("Opponent's turn to: " + coords + ".\n Cur map:\n" + rendered,
+                    session.otherPlayer(playerId), null));
 
-            playerRepository.save(curPlayer);
-            playerRepository.save(otherPlayer);
+            onAnswer.accept(new ServiceAnswer("Current map:\n" + rendered, playerId, null));
 
-            onAnswer.accept(new ServiceAnswer("Your move is over.", playerId, null));
-            onAnswer.accept(new ServiceAnswer("It's your move! Enter coords: ", session.otherPlayer(playerId), new ForceReply()));
+            if (session.getMove() % maxOps == 0) {
+                var otherPlayer = playerRepository.findById(session.otherPlayer(playerId)).get();
+
+                curPlayer.setState(Player.State.AWAITS_OTHER_PLAYER);
+                otherPlayer.setState(Player.State.AWAITS_COORDINATES);
+
+                playerRepository.save(curPlayer);
+                playerRepository.save(otherPlayer);
+
+                onAnswer.accept(new ServiceAnswer("Your move is over.", playerId, null));
+                onAnswer.accept(new ServiceAnswer("It's your move! Enter coords: ", session.otherPlayer(playerId), new ForceReply()));
+            } else {
+                onAnswer.accept(new ServiceAnswer("Enter another coords...", curPlayer.getId(), new ForceReply()));
+            }
         } else {
-            onAnswer.accept(new ServiceAnswer("Enter another coords...", curPlayer.getId(), new ForceReply()));
-            onAnswer.accept(new ServiceAnswer("Opponent's turn to: " + coords, session.otherPlayer(playerId), null));
+            onAnswer.accept(new ServiceAnswer("Unavailable. Enter another coords...", curPlayer.getId(), new ForceReply()));
         }
     }
 }

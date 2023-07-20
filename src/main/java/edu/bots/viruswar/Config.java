@@ -1,6 +1,7 @@
 package edu.bots.viruswar;
 
 import com.pengrad.telegrambot.TelegramBot;
+import edu.bots.viruswar.game.GameUtils;
 import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
@@ -36,11 +37,17 @@ public class Config {
 
     @Bean
     public Map<Player.State, StateHandler> getStateHandlers(PlayerRepository playerRepository,
-                                                            SessionRepository sessionRepository) {
+                                                            SessionRepository sessionRepository,
+                                                            GameUtils gameUtils) {
         return Map.of(
-                Player.State.AWAITS_CONNECT_ID, new AwaitConnectIdStateHandler(playerRepository, sessionRepository),
-                Player.State.AWAITS_COORDINATES, new AwaitCoordinatesStateHandler(playerRepository, sessionRepository),
+                Player.State.AWAITS_CONNECT_ID, new AwaitConnectIdStateHandler(playerRepository, sessionRepository, gameUtils),
+                Player.State.AWAITS_COORDINATES, new AwaitCoordinatesStateHandler(playerRepository, sessionRepository, gameUtils),
                 Player.State.AWAITS_OTHER_PLAYER, new AwaitOtherPlayerStateHandler()
         );
+    }
+
+    @Bean
+    public GameUtils getGameUtils() {
+        return new GameUtils(10, 10, 3);
     }
 }

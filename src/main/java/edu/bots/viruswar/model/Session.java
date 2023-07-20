@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 @Entity(name = "sessions")
 @NoArgsConstructor
 @Getter
@@ -39,5 +42,23 @@ public class Session {
         if (clientId.equals(playerId))
             return hostId;
         throw new IllegalStateException("There is no such player.");
+    }
+
+    public char[][] getMappedField() {
+        var lines = field.split("\n");
+        var res = new char[lines.length][lines[0].length()];
+
+        for (int i = 0; i < lines.length; ++i) {
+            for (int j = 0; j < lines[i].length(); ++j)
+                res[i][j] = lines[i].charAt(j);
+        }
+
+        return res;
+    }
+
+    public void setMappedField(char[][] fieldArray) {
+        field = Arrays.stream(fieldArray)
+                .map(String::new)
+                .collect(Collectors.joining("\n"));
     }
 }
