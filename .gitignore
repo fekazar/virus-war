@@ -1,4 +1,5 @@
 HELP.md
+test*.db
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar

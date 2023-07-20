@@ -6,6 +6,7 @@ import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.SessionRepository;
 import edu.bots.viruswar.service.UpdateHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,19 +30,20 @@ public class ConnectionTest {
     @MockBean
     private TelegramBot bot;
 
-    private final Consumer<ServiceAnswer> onAnswer = serviceAnswer -> {
+    private final Consumer<ServiceAnswer> logAnswer = serviceAnswer -> {
         log.info("to: " + serviceAnswer.sendTo() + " " + serviceAnswer.message());
     };
 
     @Test
+    @Order(1)
     void canConnectTest() {
         var createHost = makeUpdate("/start", 1l, true);
         var createSession = makeUpdate("/create", 1l, true);
         var st = new ArrayList<String>();
 
-        updateHandler.handle(createHost, onAnswer);
+        updateHandler.handle(createHost, logAnswer);
         // Weird way to get the output
-        updateHandler.handle(createSession, onAnswer.andThen(serviceAnswer -> st.add(serviceAnswer.message())));
+        updateHandler.handle(createSession, logAnswer.andThen(serviceAnswer -> st.add(serviceAnswer.message())));
 
         // Session id has length 10
         var sessionId = st.get(st.size() - 1).substring(st.get(st.size() - 1).length() - 10);
@@ -53,13 +55,25 @@ public class ConnectionTest {
         var connectSession = makeUpdate("/connect", 2l, true);
         var authSession = makeUpdate(sessionId, 2l, false);
 
-        updateHandler.handle(createClient, onAnswer);
-        updateHandler.handle(connectSession, onAnswer);
-        updateHandler.handle(authSession, onAnswer);
+        updateHandler.handle(createClient, logAnswer);
+        updateHandler.handle(connectSession, logAnswer);
+        updateHandler.handle(authSession, logAnswer);
 
         var createdSession = sessionRepository.findById(sessionId).get();
         assertEquals(1, createdSession.getHostId());
         assertEquals(2, createdSession.getClientId());
+    }
+
+    @Test
+    @Order(2)
+    void movesTest() {
+        var sendCoords1 = makeUpdate("a 1", 1l, false);
+        var sendCoords2 = makeUpdate("b 1", 1l, false);
+        var sendCoords3 = makeUpdate("a 2", 1l, false);
+
+        updateHandler.handle(sendCoords1, logAnswer);
+        updateHandler.handle(sendCoords2, logAnswer);
+        updateHandler.handle(sendCoords3, logAnswer);
     }
 
     private Update makeUpdate(String msg, Long from, boolean isCommand) {
