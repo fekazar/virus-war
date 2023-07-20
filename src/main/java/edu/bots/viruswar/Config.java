@@ -25,11 +25,12 @@ public class Config {
 
     @Bean
     public Map<String, CommandHandler> getCommandHandlers(PlayerRepository playerRepository,
-                                                          SessionRepository sessionRepository) {
+                                                          SessionRepository sessionRepository,
+                                                          GameUtils gameUtils) {
         return Map.of(
                 "/ping", new PingCommandHandler(),
                 "/start", new StartCommandHandler(playerRepository),
-                "/create", new CreateCommandHandler(sessionRepository),
+                "/create", new CreateCommandHandler(sessionRepository, gameUtils),
                 "/disconnect", new DisconnectCommandHandler(playerRepository, sessionRepository),
                 "/connect", new ConnectCommandHandler(playerRepository, sessionRepository)
         );

@@ -7,9 +7,8 @@ public class FieldRender {
         sb.append("```\n");
         sb.append("    A B C D E F G H I J\n");
 
-
         for (int i = 0; i < field.length; ++i) {
-            sb.append(i).append("   ");
+            sb.append(i + 1).append("   ");
             for (int j = 0; j < field[i].length - 1; ++j)
                 sb.append(field[i][j]).append(" ");
 

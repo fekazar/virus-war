@@ -2,6 +2,7 @@ package edu.bots.viruswar;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.bots.viruswar.service.UpdateHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -25,11 +26,12 @@ public class TelegramListener {
                         if (serviceAnswer.reply() != null)
                             msg.replyMarkup(serviceAnswer.reply());
 
+                        msg.parseMode(ParseMode.Markdown);
                         bot.execute(msg);
                     });
                 } catch (Exception e) {
                     log.error(e.getMessage());
-                    bot.execute(new SendMessage(update.message().from().id(), "Internal error"));
+                    bot.execute(new SendMessage(update.message().from().id(), "Internal error").parseMode(ParseMode.MarkdownV2));
                 }
             }
 

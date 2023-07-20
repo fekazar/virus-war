@@ -39,7 +39,7 @@ public class Session {
     public Long otherPlayer(Long playerId) {
         if (hostId.equals(playerId))
             return clientId;
-        if (clientId.equals(playerId))
+        if (clientId != null && clientId.equals(playerId))
             return hostId;
         throw new IllegalStateException("There is no such player.");
     }

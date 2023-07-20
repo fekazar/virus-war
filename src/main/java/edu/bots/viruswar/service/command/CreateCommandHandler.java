@@ -1,5 +1,6 @@
 package edu.bots.viruswar.service.command;
 
+import edu.bots.viruswar.game.GameUtils;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.model.Session;
 import edu.bots.viruswar.repository.SessionRepository;
@@ -9,9 +10,11 @@ import java.util.function.Consumer;
 
 public class CreateCommandHandler implements CommandHandler {
     private final SessionRepository sessionRepository;
+    private final GameUtils gameUtils;
 
-    public CreateCommandHandler(SessionRepository sessionRepository) {
+    public CreateCommandHandler(SessionRepository sessionRepository, GameUtils gameUtils) {
         this.sessionRepository = sessionRepository;
+        this.gameUtils = gameUtils;
     }
 
     @Override
@@ -25,6 +28,7 @@ public class CreateCommandHandler implements CommandHandler {
 
         var session = new Session();
         session.setHostId(playerId);
+        session.setMappedField(gameUtils.getEmptyField());
 
         session = sessionRepository.save(session);
 
