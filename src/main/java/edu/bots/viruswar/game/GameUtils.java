@@ -66,6 +66,11 @@ public class GameUtils {
         return false;
     }
 
+    public boolean canTurn(char[][] field, char figure) {
+        var finder = new AvailableFinder(field, figure);
+        return finder.hasAvailable();
+    }
+
     private boolean hasSameAround(char[][] field, char figure, Coordinates coords) {
         for (int dx = -1; dx <= 1; ++dx) {
             for (int dy = -1; dy <= 1; ++dy) {
@@ -96,6 +101,7 @@ public class GameUtils {
     }
 
     // Returns true, if reached target through the chain of killed others
+    // TODO: optimize
     private boolean dfs(int y, int x, char target, char[][] field, boolean[][] used) {
         if (x < 0 || x >= width || y < 0 || y >= height)
             return false;
@@ -122,5 +128,63 @@ public class GameUtils {
         }
 
         return false;
+    }
+
+    private class AvailableFinder {
+        private final char[][] field;
+        private final char figure;
+        private final boolean[][] used;
+        private boolean found = false;
+
+        public AvailableFinder(char[][] field, char figure) {
+            this.field = field;
+            this.figure = figure;
+            used = new boolean[field.length][field[0].length];
+        }
+
+        public boolean hasAvailable() {
+            for (int i = 0; i < field.length; ++i) {
+                for (int j = 0; j < field[0].length; ++j) {
+                    if (!used[i][j] && field[i][j] == figure && dfs(i, j))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private boolean dfs(int y, int x) {
+            if (found)
+                return true;
+
+            if (used[y][x])
+                return false;
+            used[y][x] = true;
+
+            if (field[y][x] == Figure.kill(figure))
+                return false;
+
+            if (field[y][x] == Figure.EMPTY || field[y][x] == Figure.other(figure))
+                return found = true;
+
+            for (int dx = -1; dx <= 1; ++dx) {
+                for (int dy = -1; dy <= 1; ++dy) {
+                    if (dx == 0 && dy == 0)
+                        continue;
+
+                    int nx = x + dx;
+                    int ny = y + dy;
+
+                    if (nx < 0 || nx >= width || ny < 0 || ny >= height)
+                        continue;
+
+                    var res = dfs(ny, nx);
+                    if (res)
+                        return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

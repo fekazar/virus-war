@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.request.ForceReply;
 import edu.bots.viruswar.game.Coordinates;
 import edu.bots.viruswar.game.FieldRender;
 import edu.bots.viruswar.game.GameUtils;
+import edu.bots.viruswar.model.Figure;
 import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
@@ -55,6 +56,19 @@ public class AwaitCoordinatesStateHandler implements StateHandler {
                     session.otherPlayer(playerId), null));
 
             onAnswer.accept(new ServiceAnswer("Current map:\n" + rendered, playerId, null));
+
+            if (!gameUtils.canTurn(session.getMappedField(), Figure.other(curPlayer.getPlaysWith()))) {
+                onAnswer.accept(new ServiceAnswer("You won! Session was deleted.", playerId, null));
+                onAnswer.accept(new ServiceAnswer("You lose! Session was deleted.", session.otherPlayer(playerId), null));
+
+                var otherPlayer = playerRepository.findById(session.otherPlayer(playerId)).get();
+
+                curPlayer.setState(Player.State.DEFAULT);
+                otherPlayer.setState(Player.State.DEFAULT);
+                sessionRepository.delete(session);
+
+                return;
+            }
 
             if (session.getMove() % maxOps == 0) {
                 var otherPlayer = playerRepository.findById(session.otherPlayer(playerId)).get();
