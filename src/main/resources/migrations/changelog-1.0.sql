@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS sessions(
     session_id VARCHAR(255) PRIMARY KEY,
     host_id BIGINT REFERENCES players (id),
     client_id BIGINT,
-    move INTEGER NOT NULL,
+    move INTEGER NOT NULL DEFAULT 0,
     field VARCHAR(255)
 );
 

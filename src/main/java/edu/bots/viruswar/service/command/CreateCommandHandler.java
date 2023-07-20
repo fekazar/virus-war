@@ -25,7 +25,6 @@ public class CreateCommandHandler implements CommandHandler {
 
         var session = new Session();
         session.setHostId(playerId);
-        session.setMove(1);
 
         session = sessionRepository.save(session);
 

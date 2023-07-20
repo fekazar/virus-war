@@ -28,7 +28,7 @@ public class Session {
     private Long clientId;
 
     @Column(name = "move")
-    private Integer move;
+    private Integer move = 0;
 
     @Column(name = "field")
     private String field;
