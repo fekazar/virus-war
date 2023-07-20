@@ -69,7 +69,7 @@ public class GameUtils {
     }
 
     public boolean canTurn(Session session, char figure) {
-        if (session.getMove() <= maxOps)
+        if (session.getMove() <= maxOps) // to let players do their first moves
             return true;
 
         var finder = new AvailableFinder(session.getMappedField(), figure);
@@ -108,26 +108,28 @@ public class GameUtils {
     // Returns true, if reached target through the chain of killed others
     // TODO: optimize
     private boolean dfs(int y, int x, char target, char[][] field, boolean[][] used) {
-        if (x < 0 || x >= width || y < 0 || y >= height)
-            return false;
-
-        if (used[y][x])
-            return false;
         used[y][x] = true;
 
-        if (field[y][x] == target)
-            return true;
-
-        // dfs can walk only on killed others
-        if (field[y][x] != Figure.kill(Figure.other(target)))
-            return false;
+        log.info("now in: " + x + " " + y);
+        log.info("can walk on: " + Figure.kill(Figure.other(target)));
 
         for (int dx = -1; dx <= 1; ++dx) {
             for (int dy = -1; dy <= 1; ++dy) {
-                if (dx == dy)
+                if (dx == 0 && dy == 0)
                     continue;
 
-                if (dfs(y + dy, x + dx, target, field, used))
+                int ny = y + dy;
+                int nx = x + dx;
+
+                if (ny < 0 || ny >= height || nx < 0 || nx >= width)
+                    continue;
+
+                if (field[ny][nx] == target)
+                    return true;
+
+                if (!used[ny][nx]
+                        && field[ny][nx] == Figure.kill(Figure.other(target))
+                        && dfs(ny, nx, target, field, used))
                     return true;
             }
         }
