@@ -7,6 +7,7 @@ import edu.bots.viruswar.repository.SessionRepository;
 import edu.bots.viruswar.service.command.*;
 import edu.bots.viruswar.service.state.AwaitConnectIdStateHandler;
 import edu.bots.viruswar.service.state.AwaitCoordinatesStateHandler;
+import edu.bots.viruswar.service.state.AwaitOtherPlayerStateHandler;
 import edu.bots.viruswar.service.state.StateHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +39,8 @@ public class Config {
                                                             SessionRepository sessionRepository) {
         return Map.of(
                 Player.State.AWAITS_CONNECT_ID, new AwaitConnectIdStateHandler(playerRepository, sessionRepository),
-                Player.State.AWAITS_COORDINATES, new AwaitCoordinatesStateHandler(playerRepository, sessionRepository)
+                Player.State.AWAITS_COORDINATES, new AwaitCoordinatesStateHandler(playerRepository, sessionRepository),
+                Player.State.AWAITS_OTHER_PLAYER, new AwaitOtherPlayerStateHandler()
         );
     }
 }
