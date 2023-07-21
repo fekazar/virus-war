@@ -1,10 +1,14 @@
 package edu.bots.viruswar;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.request.SendMessage;
 import edu.bots.viruswar.game.GameUtils;
 import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
+import edu.bots.viruswar.service.UpdateHandler;
 import edu.bots.viruswar.service.command.*;
 import edu.bots.viruswar.service.state.AwaitConnectIdStateHandler;
 import edu.bots.viruswar.service.state.AwaitCoordinatesStateHandler;
@@ -21,8 +25,25 @@ import java.util.concurrent.Executors;
 @Configuration
 public class Config {
     @Bean
-    public TelegramBot getBot(@Value("${bot-token}") String botApiToken) {
-        return new TelegramBot(botApiToken);
+    public TelegramBot getBot(@Value("${bot-token}") String botApiToken, UpdateHandler updateHandler) {
+        var bot = new TelegramBot(botApiToken);
+
+        bot.setUpdatesListener(updates -> {
+            for (var update: updates) {
+                updateHandler.handle(update, serviceAnswer -> {
+                    var msg = new SendMessage(serviceAnswer.sendTo(), serviceAnswer.message());
+                    if (serviceAnswer.reply() != null)
+                        msg.replyMarkup(serviceAnswer.reply());
+
+                    msg.parseMode(ParseMode.Markdown);
+                    bot.execute(msg);
+                });
+            }
+
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        });
+
+        return bot;
     }
 
     @Bean

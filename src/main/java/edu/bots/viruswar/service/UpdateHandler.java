@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
@@ -37,7 +38,13 @@ public class UpdateHandler {
     }
 
     public void handle(Update update, Consumer<ServiceAnswer> onAnswer) {
-        messagesThreadPool.submit(new MessageJob(update, onAnswer));
+        //messagesThreadPool.submit(new MessageJob(update, onAnswer));
+        CompletableFuture.runAsync(new MessageJob(update, onAnswer), messagesThreadPool)
+                .exceptionally(throwable -> {
+                    log.error(throwable.getMessage());
+                    onAnswer.accept(new ServiceAnswer("Error :(", update.message().from().id(), null));
+                    return null;
+                });
     }
 
     @RequiredArgsConstructor
