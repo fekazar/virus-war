@@ -24,7 +24,7 @@ public class DisconnectCommandHandler implements CommandHandler {
     public void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer) {
         var sessionOpt = sessionRepository.findByPlayerId(playerId);
         if (sessionOpt.isEmpty()) {
-            onAnswer.accept(new ServiceAnswer("You are not connected to any session", playerId, null));
+            onAnswer.accept(new ServiceAnswer("Вы не подключены ни к какой сессии.", playerId, null));
             return;
         }
 
@@ -41,10 +41,10 @@ public class DisconnectCommandHandler implements CommandHandler {
             client.setState(Player.State.DEFAULT);
             playerRepository.save(client);
 
-            onAnswer.accept(new ServiceAnswer("Your opponent left from the session. You are disconnected", session.otherPlayer(playerId), null));
+            onAnswer.accept(new ServiceAnswer("Оппонент покинул игру. Вы отключены от сессии.", session.otherPlayer(playerId), null));
         }
 
         sessionRepository.deleteBySessionId(session.getSessionId());
-        onAnswer.accept(new ServiceAnswer("You've been disconnected from session.", playerId, null));
+        onAnswer.accept(new ServiceAnswer("Вы были отключены от сессии.", playerId, null));
     }
 }

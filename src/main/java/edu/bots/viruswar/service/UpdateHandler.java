@@ -42,7 +42,7 @@ public class UpdateHandler {
         CompletableFuture.runAsync(new MessageJob(update, onAnswer), messagesThreadPool)
                 .exceptionally(throwable -> {
                     log.error(throwable.getMessage());
-                    onAnswer.accept(new ServiceAnswer("Error :(", update.message().from().id(), null));
+                    onAnswer.accept(new ServiceAnswer("Ошибка \uD83D\uDE2D", update.message().from().id(), null));
                     return null;
                 });
     }

@@ -1,6 +1,7 @@
 package edu.bots.viruswar.service.state;
 
 import com.pengrad.telegrambot.model.request.ForceReply;
+import edu.bots.viruswar.game.FieldRender;
 import edu.bots.viruswar.game.GameUtils;
 import edu.bots.viruswar.model.Figure;
 import edu.bots.viruswar.model.Player;
@@ -29,7 +30,7 @@ public class AwaitConnectIdStateHandler implements StateHandler {
         var client = playerRepository.findById(playerId).get();
 
         if (sessionOpt.isEmpty()) {
-            onAnswer.accept(new ServiceAnswer("There is no such session.", playerId, null));
+            onAnswer.accept(new ServiceAnswer("Такой сессии нет.", playerId, null));
             client.setState(Player.State.DEFAULT);
             playerRepository.save(client);
             return;
@@ -37,7 +38,7 @@ public class AwaitConnectIdStateHandler implements StateHandler {
 
         var session = sessionOpt.get();
         if (session.getClientId() != null) {
-            onAnswer.accept(new ServiceAnswer("Unavailable session.", playerId, null));
+            onAnswer.accept(new ServiceAnswer("Недоступная сессия.", playerId, null));
             return;
         }
 
@@ -57,8 +58,10 @@ public class AwaitConnectIdStateHandler implements StateHandler {
         playerRepository.save(host);
         playerRepository.save(client);
 
-        onAnswer.accept(new ServiceAnswer("You have connected to the session. Starting a game (not yet).", playerId, null));
-        onAnswer.accept(new ServiceAnswer("Player has connected to the session. Starting a game (not yet).", host.getId(), null));
-        onAnswer.accept(new ServiceAnswer("Enter coordinates: ", host.getId(), new ForceReply()));
+        onAnswer.accept(new ServiceAnswer("Вы подключились к сессии, игра начинается.", playerId, null));
+        onAnswer.accept(new ServiceAnswer("Кто-то подключился к сессии, игра начинается.", host.getId(), null));
+
+        onAnswer.accept(new ServiceAnswer("Поле: \n" + FieldRender.render(session.getMappedField()), host.getId(), null));
+        onAnswer.accept(new ServiceAnswer("Введите координаты: ", host.getId(), new ForceReply()));
     }
 }

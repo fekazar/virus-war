@@ -25,4 +25,8 @@ public record Coordinates(int x, int y) {
             return Optional.empty();
         }
     }
+
+    public String toGameRep() {
+        return String.format("%s %s", (char) ('a' + x + 1), y + 1);
+    }
 }

@@ -22,7 +22,7 @@ public class CreateCommandHandler implements CommandHandler {
     public void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer) {
         var sessionOpt = sessionRepository.findByPlayerId(playerId);
         if (sessionOpt.isPresent()) {
-            onAnswer.accept(new ServiceAnswer("You already have an active session. Id: " + sessionOpt.get().getSessionId(), playerId, null));
+            onAnswer.accept(new ServiceAnswer("У вас уже есть активная сессия. Id: " + sessionOpt.get().getSessionId(), playerId, null));
             return;
         }
 
@@ -32,6 +32,6 @@ public class CreateCommandHandler implements CommandHandler {
 
         session = sessionRepository.save(session);
 
-        onAnswer.accept(new ServiceAnswer("You session: " + session.getSessionId(), playerId, null));
+        onAnswer.accept(new ServiceAnswer("Id вашей сессии: " + session.getSessionId(), playerId, null));
     }
 }

@@ -22,7 +22,7 @@ public class ConnectCommandHandler implements CommandHandler {
         var sessionOpt = sessionRepository.findByPlayerId(playerId);
 
         if (sessionOpt.isPresent()) {
-            onAnswer.accept(new ServiceAnswer("You are already connected to some session.", playerId, null));
+            onAnswer.accept(new ServiceAnswer("Вы уже подключены к какой-то сессии.", playerId, null));
             return;
         }
 
@@ -30,6 +30,6 @@ public class ConnectCommandHandler implements CommandHandler {
         player.setState(Player.State.AWAITS_CONNECT_ID);
         playerRepository.save(player);
 
-        onAnswer.accept(new ServiceAnswer("Enter session Id:", playerId, new ForceReply()));
+        onAnswer.accept(new ServiceAnswer("Введите Id сессии:", playerId, new ForceReply()));
     }
 }

@@ -23,10 +23,10 @@ public class StartCommandHandler implements CommandHandler {
             player.setState(Player.State.DEFAULT);
             playerRepository.save(player);
 
-            onAnswer.accept(new ServiceAnswer("Welcome, new player!", playerId, null));
+            onAnswer.accept(new ServiceAnswer("Добро пожаловать! Теперь вы зарагистрированы. Ознакомьтесь с правилами по команде /help.", playerId, null));
             return;
         }
 
-        onAnswer.accept(new ServiceAnswer("Welcome, old player", playerId, null));
+        onAnswer.accept(new ServiceAnswer("Вы уже зарегестрированы.", playerId, null));
     }
 }

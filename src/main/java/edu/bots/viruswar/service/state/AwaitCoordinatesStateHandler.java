@@ -27,16 +27,9 @@ public class AwaitCoordinatesStateHandler implements StateHandler {
 
     @Override
     public void handle(Long playerId, String msg, Consumer<ServiceAnswer> onAnswer) {
-        /*
-            TODO:
-             1. validate coordinates
-             2. check if it's possible to put a figure there
-             3. put a figure, update moves
-         */
-
         var coordsOpt = Coordinates.parse(msg);
         if (coordsOpt.isEmpty()) {
-            onAnswer.accept(new ServiceAnswer("Enter correct coordinates", playerId, new ForceReply()));
+            onAnswer.accept(new ServiceAnswer("Введите корректные координаты.", playerId, new ForceReply()));
             return;
         }
 
@@ -52,14 +45,14 @@ public class AwaitCoordinatesStateHandler implements StateHandler {
 
             var rendered = FieldRender.render(session.getMappedField());
 
-            onAnswer.accept(new ServiceAnswer("Opponent's turn to: " + coords + ".\n Cur map:\n" + rendered,
+            onAnswer.accept(new ServiceAnswer("Ход противника: " + coords.toGameRep() + ". Поле:\n" + rendered,
                     session.otherPlayer(playerId), null));
 
-            onAnswer.accept(new ServiceAnswer("Current map:\n" + rendered, playerId, null));
+            onAnswer.accept(new ServiceAnswer("Поле:\n" + rendered, playerId, null));
 
             if (!gameUtils.canTurn(session, Figure.other(curPlayer.getPlaysWith()))) {
-                onAnswer.accept(new ServiceAnswer("You won! Session was deleted.", playerId, null));
-                onAnswer.accept(new ServiceAnswer("You lose! Session was deleted.", session.otherPlayer(playerId), null));
+                onAnswer.accept(new ServiceAnswer("Вы выиграли! Сессия окончена.", playerId, null));
+                onAnswer.accept(new ServiceAnswer("Вы проиграли! Сессия окончена.", session.otherPlayer(playerId), null));
 
                 var otherPlayer = playerRepository.findById(session.otherPlayer(playerId)).get();
 
@@ -72,8 +65,8 @@ public class AwaitCoordinatesStateHandler implements StateHandler {
 
             // TODO: remove code repeat
             if (!gameUtils.canTurn(session, curPlayer.getPlaysWith())) {
-                onAnswer.accept(new ServiceAnswer("You won! Session was deleted.", session.otherPlayer(playerId), null));
-                onAnswer.accept(new ServiceAnswer("You lose! Session was deleted.", playerId, null));
+                onAnswer.accept(new ServiceAnswer("Вы выиграли! Сессия окончена.", session.otherPlayer(playerId), null));
+                onAnswer.accept(new ServiceAnswer("Вы проиграли! Сессия окончена.", playerId, null));
 
                 var otherPlayer = playerRepository.findById(session.otherPlayer(playerId)).get();
 
@@ -93,13 +86,13 @@ public class AwaitCoordinatesStateHandler implements StateHandler {
                 playerRepository.save(curPlayer);
                 playerRepository.save(otherPlayer);
 
-                onAnswer.accept(new ServiceAnswer("Your move is over.", playerId, null));
-                onAnswer.accept(new ServiceAnswer("It's your move! Enter coords: ", session.otherPlayer(playerId), new ForceReply()));
+                onAnswer.accept(new ServiceAnswer("Ход окончен.", playerId, null));
+                onAnswer.accept(new ServiceAnswer("Ваш ход! Введите координаты: ", session.otherPlayer(playerId), new ForceReply()));
             } else {
-                onAnswer.accept(new ServiceAnswer("Enter another coords...", curPlayer.getId(), new ForceReply()));
+                onAnswer.accept(new ServiceAnswer("Введите координаты: ", curPlayer.getId(), new ForceReply()));
             }
         } else {
-            onAnswer.accept(new ServiceAnswer("Unavailable. Enter another coords...", curPlayer.getId(), new ForceReply()));
+            onAnswer.accept(new ServiceAnswer("Невозможно, введите другие координаты: ", curPlayer.getId(), new ForceReply()));
         }
     }
 }
