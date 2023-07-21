@@ -1,12 +1,15 @@
 package edu.bots.viruswar.game;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Optional;
 
+@Slf4j
 public record Coordinates(int x, int y) {
     public static Optional<Coordinates> parse(String s) {
         var spl = s.toLowerCase().split(" ");
 
-        if (spl.length < 2 || spl[0].length() != 1 || spl[1].length() != 1)
+        if (spl.length < 2)
             return Optional.empty();
 
         try {
