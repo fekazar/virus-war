@@ -1,7 +1,7 @@
 package edu.bots.viruswar.model;
 public class Figure {
     // TODO: update to better chars
-    public static final char EMPTY = '.';
+    public static final char EMPTY = '•';
     public static final char CROSS = 'X';
     public static final char CIRCLE = 'O';
     public static final char KILLED_CROSS = '#';

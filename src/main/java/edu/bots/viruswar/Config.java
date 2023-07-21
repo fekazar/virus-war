@@ -55,7 +55,8 @@ public class Config {
                 "/start", new StartCommandHandler(playerRepository),
                 "/create", new CreateCommandHandler(sessionRepository, gameUtils),
                 "/disconnect", new DisconnectCommandHandler(playerRepository, sessionRepository),
-                "/connect", new ConnectCommandHandler(playerRepository, sessionRepository)
+                "/connect", new ConnectCommandHandler(playerRepository, sessionRepository),
+                "/help", new HelpCommandHandler()
         );
     }
 
