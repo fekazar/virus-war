@@ -16,7 +16,7 @@ public class HelpCommandHandler implements CommandHandler {
                 ***Обозначения***
                 """
                 + "```\n"
-                + Figure.EMPTY + " - пустая клета\n"
+                + Figure.EMPTY + " - пустая клетка\n"
                 + Figure.CROSS + " - живой крестик\n"
                 + Figure.CIRCLE + " - живой нолик\n"
                 + Figure.KILLED_CROSS  + " - убитый крестик\n"

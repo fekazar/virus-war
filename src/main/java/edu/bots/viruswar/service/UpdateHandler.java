@@ -41,7 +41,7 @@ public class UpdateHandler {
         //messagesThreadPool.submit(new MessageJob(update, onAnswer));
         CompletableFuture.runAsync(new MessageJob(update, onAnswer), messagesThreadPool)
                 .exceptionally(throwable -> {
-                    log.error(throwable.getMessage());
+                    log.warn(throwable.getMessage());
                     onAnswer.accept(new ServiceAnswer("Ошибка \uD83D\uDE2D", update.message().from().id(), null));
                     return null;
                 });

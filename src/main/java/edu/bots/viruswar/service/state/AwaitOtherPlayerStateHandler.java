@@ -7,6 +7,6 @@ import java.util.function.Consumer;
 public class AwaitOtherPlayerStateHandler implements StateHandler {
     @Override
     public void handle(Long playerId, String msg, Consumer<ServiceAnswer> onAnswer) {
-        onAnswer.accept(new ServiceAnswer("It's not your turn.", playerId, null));
+        onAnswer.accept(new ServiceAnswer("Это не ваш ход.", playerId, null));
     }
 }

@@ -2,9 +2,7 @@ package edu.bots.viruswar.game;
 
 import edu.bots.viruswar.model.Figure;
 import edu.bots.viruswar.model.Session;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class GameUtils {
     // TODO: inject from properties
     private final int width;
@@ -109,9 +107,6 @@ public class GameUtils {
     // TODO: optimize
     private boolean dfs(int y, int x, char target, char[][] field, boolean[][] used) {
         used[y][x] = true;
-
-        log.info("now in: " + x + " " + y);
-        log.info("can walk on: " + Figure.kill(Figure.other(target)));
 
         for (int dx = -1; dx <= 1; ++dx) {
             for (int dy = -1; dy <= 1; ++dy) {
