@@ -11,10 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 import static org.mockito.Mockito.*;
@@ -43,17 +45,18 @@ public class ConnectionTest {
 
     @Test
     @Order(1)
-    void canConnectTest() {
+    void canConnectTest() throws Exception {
         var createHost = makeUpdate("/start", 1l, true);
         var createSession = makeUpdate("/create", 1l, true);
-        var st = new ArrayList<String>();
+        var st = new ArrayBlockingQueue<String>(1);
 
-        updateHandler.handle(createHost, logAnswer);
+        awaitUpdate(createHost, logAnswer);
         // Weird way to get the output
-        updateHandler.handle(createSession, logAnswer.andThen(serviceAnswer -> st.add(serviceAnswer.message())));
+        awaitUpdate(createSession, logAnswer.andThen(serviceAnswer -> st.add(serviceAnswer.message())));
 
         // Session id has length 10
-        var sessionId = st.get(st.size() - 1).substring(st.get(st.size() - 1).length() - 10);
+        var str = st.take();
+        var sessionId = str.substring(str.length() - 10);
         log.info("Session id: " + sessionId);
 
         assertNotNull(sessionId);
@@ -62,9 +65,9 @@ public class ConnectionTest {
         var connectSession = makeUpdate("/connect", 2l, true);
         var authSession = makeUpdate(sessionId, 2l, false);
 
-        updateHandler.handle(createClient, logAnswer);
-        updateHandler.handle(connectSession, logAnswer);
-        updateHandler.handle(authSession, logAnswer);
+        awaitUpdate(createClient, logAnswer);
+        awaitUpdate(connectSession, logAnswer);
+        awaitUpdate(authSession, logAnswer);
 
         var createdSession = sessionRepository.findById(sessionId).get();
         assertEquals(1, createdSession.getHostId());
@@ -73,24 +76,24 @@ public class ConnectionTest {
 
     @Test
     @Order(2)
-    void movesTest() {
+    void movesTest() throws Exception {
         var sendCoords1 = makeUpdate("a 1", 1l, false);
         var sendCoords2 = makeUpdate("b 1", 1l, false);
         var sendCoords3 = makeUpdate("a 2", 1l, false);
 
-        updateHandler.handle(sendCoords1, logAnswer);
-        updateHandler.handle(sendCoords2, logAnswer);
-        updateHandler.handle(sendCoords3, logAnswer);
+        awaitUpdate(sendCoords1, logAnswer);
+        awaitUpdate(sendCoords2, logAnswer);
+        awaitUpdate(sendCoords3, logAnswer);
     }
 
     @Test
-    void disconnectTest() {
+    void disconnectTest() throws Exception {
         var createHost = makeUpdate("/start", 4l, true);
         var createSession = makeUpdate("/create", 4l, true);
         var st = new ArrayList<String>();
 
-        updateHandler.handle(createHost, devNull);
-        updateHandler.handle(createSession, devNull.andThen(serviceAnswer -> st.add(serviceAnswer.message())));
+        awaitUpdate(createHost, devNull);
+        awaitUpdate(createSession, devNull.andThen(serviceAnswer -> st.add(serviceAnswer.message())));
 
         // Session id has length 10
         var sessionId = st.get(st.size() - 1).substring(st.get(st.size() - 1).length() - 10);
@@ -102,16 +105,16 @@ public class ConnectionTest {
         var connectSession = makeUpdate("/connect", 5l, true);
         var authSession = makeUpdate(sessionId, 5l, false);
 
-        updateHandler.handle(createClient, devNull);
-        updateHandler.handle(connectSession, devNull);
-        updateHandler.handle(authSession, devNull);
+        awaitUpdate(createClient, devNull);
+        awaitUpdate(connectSession, devNull);
+        awaitUpdate(authSession, devNull);
 
         var createdSession = sessionRepository.findById(sessionId).get();
         assertEquals(4, createdSession.getHostId());
         assertEquals(5, createdSession.getClientId());
 
         var disconnectClient = makeUpdate("/disconnect", 5l, true);
-        updateHandler.handle(disconnectClient, logAnswer);
+        awaitUpdate(disconnectClient, logAnswer);
 
         var sessionOpt = sessionRepository.findById(sessionId);
         assertTrue(sessionOpt.isEmpty());
@@ -145,5 +148,12 @@ public class ConnectionTest {
         }
 
         return update;
+    }
+
+    private void awaitUpdate(Update update, Consumer<ServiceAnswer> onAnswer) throws Exception {
+        var latch = new CountDownLatch(1);
+        updateHandler.handle(update, onAnswer.andThen(serviceAnswer -> latch.countDown()));
+        latch.await();
+        Thread.sleep(200); // cringe :(
     }
 }
