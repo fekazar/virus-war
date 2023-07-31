@@ -72,6 +72,12 @@ public class ConnectionTest {
         var createdSession = sessionRepository.findById(sessionId).get();
         assertEquals(1, createdSession.getHostId());
         assertEquals(2, createdSession.getClientId());
+
+        var firstMove = makeUpdate("a 1", 1l, false);
+        awaitUpdate(firstMove, logAnswer.andThen(ans -> assertFalse(ans.message().contains("корректные"))));
+
+        var incorrectMove = makeUpdate("k 10", 1l, false);
+        awaitUpdate(incorrectMove, logAnswer.andThen(ans -> assertTrue(ans.message().contains("корректные"))));
     }
 
     @Test

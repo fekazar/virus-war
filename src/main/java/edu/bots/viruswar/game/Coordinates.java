@@ -17,7 +17,7 @@ public record Coordinates(int x, int y) {
             int y = Integer.parseInt(spl[1]) - 1;
 
             // TODO: inject field size from properties
-            if (x > 10 || x < 0 || y > 10 || y < 0)
+            if (x >= 10 || x < 0 || y >= 10 || y < 0)
                 return Optional.empty();
 
             return Optional.of(new Coordinates(x, y));
@@ -27,6 +27,6 @@ public record Coordinates(int x, int y) {
     }
 
     public String toGameRep() {
-        return String.format("%s %s", (char) ('a' + x + 1), y + 1);
+        return String.format("%s %s", (char) ('a' + x), y + 1);
     }
 }
