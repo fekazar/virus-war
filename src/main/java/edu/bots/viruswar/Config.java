@@ -30,7 +30,7 @@ public class Config {
 
         bot.setUpdatesListener(updates -> {
             for (var update: updates) {
-                updateHandler.handle(update, serviceAnswer -> {
+                updateHandler.handleAsync(update, serviceAnswer -> {
                     var msg = new SendMessage(serviceAnswer.sendTo(), serviceAnswer.message());
                     if (serviceAnswer.reply() != null)
                         msg.replyMarkup(serviceAnswer.reply());
@@ -78,6 +78,6 @@ public class Config {
 
     @Bean
     public ExecutorService updateHandlerThreadPool() {
-        return Executors.newCachedThreadPool();
+        return Executors.newVirtualThreadPerTaskExecutor();
     }
 }

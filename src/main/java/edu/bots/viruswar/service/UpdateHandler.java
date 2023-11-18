@@ -37,8 +37,7 @@ public class UpdateHandler {
         this.messagesThreadPool = messagesThreadPool;
     }
 
-    public void handle(Update update, Consumer<ServiceAnswer> onAnswer) {
-        //messagesThreadPool.submit(new MessageJob(update, onAnswer));
+    public void handleAsync(Update update, Consumer<ServiceAnswer> onAnswer) {
         CompletableFuture.runAsync(new MessageJob(update, onAnswer), messagesThreadPool)
                 .exceptionally(throwable -> {
                     log.warn(throwable.getMessage());

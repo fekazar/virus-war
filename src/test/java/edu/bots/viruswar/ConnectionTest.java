@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -158,7 +157,7 @@ public class ConnectionTest {
 
     private void awaitUpdate(Update update, Consumer<ServiceAnswer> onAnswer) throws Exception {
         var latch = new CountDownLatch(1);
-        updateHandler.handle(update, onAnswer.andThen(serviceAnswer -> latch.countDown()));
+        updateHandler.handleAsync(update, onAnswer.andThen(serviceAnswer -> latch.countDown()));
         latch.await();
         Thread.sleep(200); // cringe :(
     }
