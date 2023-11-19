@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -59,10 +60,8 @@ public class UpdateHandler {
 
             var msg = update.message().text().trim();
 
-            // TODO: use .first() method
-            Optional<MessageEntity> commandOpt = update.message().entities() == null ? Optional.empty() : Arrays.stream(update.message().entities())
-                    .filter(messageEntity -> messageEntity.type().equals(MessageEntity.Type.bot_command))
-                    .findAny();
+            // omg, java 21
+            var commandOpt = Optional.ofNullable(List.of(update.message().entities()).getFirst());
 
             if (commandOpt.isPresent()) {
                 var comEntity = commandOpt.get();
