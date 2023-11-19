@@ -5,9 +5,11 @@ import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
+@Component("/start")
 public class StartCommandHandler implements CommandHandler {
     private final PlayerRepository playerRepository;
 
@@ -16,7 +18,7 @@ public class StartCommandHandler implements CommandHandler {
     }
 
     @Override
-    public void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer) {
+    public void handle(Long playerId, Consumer<ServiceAnswer> onAnswer) {
         var playerOpt = playerRepository.findById(playerId);
         if (playerOpt.isEmpty()) {
             var player = new Player();

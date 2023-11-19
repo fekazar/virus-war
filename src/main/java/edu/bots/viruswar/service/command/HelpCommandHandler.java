@@ -2,12 +2,14 @@ package edu.bots.viruswar.service.command;
 
 import edu.bots.viruswar.model.Figure;
 import edu.bots.viruswar.model.ServiceAnswer;
+import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
+@Component("/help")
 public class HelpCommandHandler implements CommandHandler {
     @Override
-    public void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer) {
+    public void handle(Long playerId, Consumer<ServiceAnswer> onAnswer) {
         onAnswer.accept(new ServiceAnswer("""
                 [Правила](https://ru.wikipedia.org/wiki/%D0%92%D0%BE%D0%B9%D0%BD%D0%B0_%D0%B2%D0%B8%D1%80%D1%83%D1%81%D0%BE%D0%B2)
                 

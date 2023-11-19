@@ -8,10 +8,12 @@ import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Consumer;
 
+@Component
 public class AwaitConnectIdStateHandler implements StateHandler {
     private final PlayerRepository playerRepository;
     private final SessionRepository sessionRepository;

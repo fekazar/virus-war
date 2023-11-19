@@ -4,9 +4,11 @@ import edu.bots.viruswar.game.GameUtils;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.model.Session;
 import edu.bots.viruswar.repository.SessionRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
+@Component("/create")
 public class CreateCommandHandler implements CommandHandler {
     private final SessionRepository sessionRepository;
     private final GameUtils gameUtils;
@@ -17,7 +19,7 @@ public class CreateCommandHandler implements CommandHandler {
     }
 
     @Override
-    public void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer) {
+    public void handle(Long playerId, Consumer<ServiceAnswer> onAnswer) {
         var sessionOpt = sessionRepository.findByPlayerId(playerId);
         if (sessionOpt.isPresent()) {
             onAnswer.accept(new ServiceAnswer("У вас уже есть активная сессия. Id: " + sessionOpt.get().getSessionId(), playerId, null));

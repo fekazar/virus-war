@@ -17,12 +17,14 @@ import edu.bots.viruswar.service.state.StateHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Configuration
+@EnableTransactionManagement
 public class Config {
     @Bean
     public TelegramBot getBot(@Value("${bot-token}") String botApiToken, UpdateHandler updateHandler) {
@@ -47,27 +49,15 @@ public class Config {
     }
 
     @Bean
-    public Map<String, CommandHandler> getCommandHandlers(PlayerRepository playerRepository,
-                                                          SessionRepository sessionRepository,
-                                                          GameUtils gameUtils) {
+    public Map<Player.State, StateHandler> stateHandlers(
+            AwaitConnectIdStateHandler awaitConnectIdStateHandler,
+            AwaitCoordinatesStateHandler awaitCoordinatesStateHandler,
+            AwaitOtherPlayerStateHandler awaitOtherPlayerStateHandler
+    ) {
         return Map.of(
-                "/ping", new PingCommandHandler(),
-                "/start", new StartCommandHandler(playerRepository),
-                "/create", new CreateCommandHandler(sessionRepository, gameUtils),
-                "/disconnect", new DisconnectCommandHandler(playerRepository, sessionRepository),
-                "/connect", new ConnectCommandHandler(playerRepository, sessionRepository),
-                "/help", new HelpCommandHandler()
-        );
-    }
-
-    @Bean
-    public Map<Player.State, StateHandler> getStateHandlers(PlayerRepository playerRepository,
-                                                            SessionRepository sessionRepository,
-                                                            GameUtils gameUtils) {
-        return Map.of(
-                Player.State.AWAITS_CONNECT_ID, new AwaitConnectIdStateHandler(playerRepository, sessionRepository, gameUtils),
-                Player.State.AWAITS_COORDINATES, new AwaitCoordinatesStateHandler(playerRepository, sessionRepository, gameUtils),
-                Player.State.AWAITS_OTHER_PLAYER, new AwaitOtherPlayerStateHandler()
+                Player.State.AWAITS_CONNECT_ID, awaitConnectIdStateHandler,
+                Player.State.AWAITS_COORDINATES, awaitCoordinatesStateHandler,
+                Player.State.AWAITS_OTHER_PLAYER, awaitOtherPlayerStateHandler
         );
     }
 

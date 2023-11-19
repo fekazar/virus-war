@@ -10,9 +10,11 @@ import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
+@Component
 public class AwaitCoordinatesStateHandler implements StateHandler {
     private final PlayerRepository playerRepository;
     private final SessionRepository sessionRepository;

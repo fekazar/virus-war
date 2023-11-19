@@ -6,9 +6,11 @@ import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
+@Component("/connect")
 public class ConnectCommandHandler implements CommandHandler {
     private final PlayerRepository playerRepository;
     private final SessionRepository sessionRepository;
@@ -20,7 +22,7 @@ public class ConnectCommandHandler implements CommandHandler {
 
     @Override
     @Transactional
-    public void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer) {
+    public void handle(Long playerId, Consumer<ServiceAnswer> onAnswer) {
         var sessionOpt = sessionRepository.findByPlayerId(playerId);
 
         if (sessionOpt.isPresent()) {

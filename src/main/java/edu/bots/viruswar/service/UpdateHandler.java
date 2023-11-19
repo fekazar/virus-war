@@ -59,6 +59,7 @@ public class UpdateHandler {
 
             var msg = update.message().text().trim();
 
+            // TODO: use .first() method
             Optional<MessageEntity> commandOpt = update.message().entities() == null ? Optional.empty() : Arrays.stream(update.message().entities())
                     .filter(messageEntity -> messageEntity.type().equals(MessageEntity.Type.bot_command))
                     .findAny();
@@ -72,7 +73,7 @@ public class UpdateHandler {
                 if (handler == null) {
                     log.info("No command handler found for " + com);
                 } else {
-                    handler.handle(update.message().from().id(), msg, onAnswer);
+                    handler.handle(update.message().from().id(), onAnswer);
                     return;
                 }
             } else {

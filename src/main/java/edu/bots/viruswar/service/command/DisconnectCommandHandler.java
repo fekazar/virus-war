@@ -4,12 +4,14 @@ import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
 @Slf4j
+@Component("/disconnect")
 public class DisconnectCommandHandler implements CommandHandler {
     private final PlayerRepository playerRepository;
     private final SessionRepository sessionRepository;
@@ -21,7 +23,7 @@ public class DisconnectCommandHandler implements CommandHandler {
 
     @Override
     @Transactional
-    public void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer) {
+    public void handle(Long playerId, Consumer<ServiceAnswer> onAnswer) {
         var sessionOpt = sessionRepository.findByPlayerId(playerId);
         if (sessionOpt.isEmpty()) {
             onAnswer.accept(new ServiceAnswer("Вы не подключены ни к какой сессии.", playerId, null));
