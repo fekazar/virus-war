@@ -9,6 +9,6 @@ import java.util.function.Consumer;
 public class PingCommandHandler implements CommandHandler {
     @Override
     public void handle(Long playerId, Consumer<ServiceAnswer> onAnswer) {
-        onAnswer.accept(new ServiceAnswer("```pong```", playerId, null));
+        onAnswer.accept(new ServiceAnswer("`pong`", playerId, null));
     }
 }

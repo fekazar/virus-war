@@ -4,6 +4,7 @@ import edu.bots.viruswar.game.GameUtils;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.model.Session;
 import edu.bots.viruswar.repository.SessionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;

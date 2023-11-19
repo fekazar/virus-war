@@ -4,7 +4,7 @@ public class FieldRender {
     public static String render(char[][] field) {
         var sb = new StringBuilder();
 
-        sb.append("```\n");
+        sb.append("`\n");
         sb.append("    A B C D E F G H I J\n");
 
         for (int i = 0; i < field.length; ++i) {
@@ -17,7 +17,7 @@ public class FieldRender {
             sb.append("\n");
         }
 
-        sb.append("```");
+        sb.append("`");
 
         return sb.toString();
     }
