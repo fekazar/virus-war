@@ -1,14 +1,17 @@
 package edu.bots.viruswar.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity(name = "players")
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Player {
     @Id
     private Long id;

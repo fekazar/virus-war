@@ -5,9 +5,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Arrays;
@@ -15,8 +18,8 @@ import java.util.stream.Collectors;
 
 @Entity(name = "sessions")
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Session {
     @Id
     @Column(name = "session_id")

@@ -9,6 +9,7 @@ import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
+import jakarta.transaction.Transactional;
 
 import java.util.function.Consumer;
 
@@ -26,6 +27,7 @@ public class AwaitCoordinatesStateHandler implements StateHandler {
     }
 
     @Override
+    @Transactional
     public void handle(Long playerId, String msg, Consumer<ServiceAnswer> onAnswer) {
         var coordsOpt = Coordinates.parse(msg);
         if (coordsOpt.isEmpty()) {
@@ -41,7 +43,7 @@ public class AwaitCoordinatesStateHandler implements StateHandler {
         boolean hasTurned = gameUtils.update(coords, curPlayer.getPlaysWith(), session);
         if (hasTurned) {
             session.setMove(session.getMove() + 1);
-            session = sessionRepository.save(session);
+            //session = sessionRepository.save(session);
 
             var rendered = FieldRender.render(session.getMappedField());
 
@@ -83,8 +85,8 @@ public class AwaitCoordinatesStateHandler implements StateHandler {
                 curPlayer.setState(Player.State.AWAITS_OTHER_PLAYER);
                 otherPlayer.setState(Player.State.AWAITS_COORDINATES);
 
-                playerRepository.save(curPlayer);
-                playerRepository.save(otherPlayer);
+                //playerRepository.save(curPlayer);
+                //playerRepository.save(otherPlayer);
 
                 onAnswer.accept(new ServiceAnswer("Ход окончен.", playerId, null));
                 onAnswer.accept(new ServiceAnswer("Ваш ход! Введите координаты: ", session.otherPlayer(playerId), new ForceReply()));

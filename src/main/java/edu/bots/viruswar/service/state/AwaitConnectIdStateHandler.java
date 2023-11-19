@@ -32,7 +32,7 @@ public class AwaitConnectIdStateHandler implements StateHandler {
         if (sessionOpt.isEmpty()) {
             onAnswer.accept(new ServiceAnswer("Такой сессии нет.", playerId, null));
             client.setState(Player.State.DEFAULT);
-            playerRepository.save(client);
+            //playerRepository.save(client);
             return;
         }
 
@@ -54,9 +54,9 @@ public class AwaitConnectIdStateHandler implements StateHandler {
         host.setPlaysWith(Figure.CROSS);
         client.setPlaysWith(Figure.CIRCLE);
 
-        sessionRepository.save(session);
-        playerRepository.save(host);
-        playerRepository.save(client);
+        //sessionRepository.save(session);
+        //playerRepository.save(host);
+        //playerRepository.save(client);
 
         onAnswer.accept(new ServiceAnswer("Вы подключились к сессии, игра начинается.", playerId, null));
         onAnswer.accept(new ServiceAnswer("Кто-то подключился к сессии, игра начинается.", host.getId(), null));

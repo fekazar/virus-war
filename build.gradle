@@ -20,6 +20,12 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.postgresql:postgresql:42.6.0'
+	//implementation 'org.springframework.boot:spring-boot-starter-cache'
+	implementation 'org.hibernate.orm:hibernate-jcache'
+	//implementation 'com.github.ben-manes.caffeine:caffeine'
+	implementation 'com.github.ben-manes.caffeine:jcache'
+	implementation 'org.ehcache:ehcache'
+
 	implementation 'org.liquibase:liquibase-core:4.23.0'
 	implementation 'com.github.pengrad:java-telegram-bot-api:6.7.0'
 

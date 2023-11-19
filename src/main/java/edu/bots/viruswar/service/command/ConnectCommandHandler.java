@@ -5,6 +5,7 @@ import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
 import edu.bots.viruswar.repository.SessionRepository;
+import jakarta.transaction.Transactional;
 
 import java.util.function.Consumer;
 
@@ -18,6 +19,7 @@ public class ConnectCommandHandler implements CommandHandler {
     }
 
     @Override
+    @Transactional
     public void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer) {
         var sessionOpt = sessionRepository.findByPlayerId(playerId);
 
@@ -28,7 +30,7 @@ public class ConnectCommandHandler implements CommandHandler {
 
         var player = playerRepository.findById(playerId).get();
         player.setState(Player.State.AWAITS_CONNECT_ID);
-        playerRepository.save(player);
+        //playerRepository.save(player);
 
         onAnswer.accept(new ServiceAnswer("Введите Id сессии:", playerId, new ForceReply()));
     }

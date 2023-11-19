@@ -32,14 +32,14 @@ public class DisconnectCommandHandler implements CommandHandler {
         var host = playerRepository.findById(session.getHostId()).get();
         host.setPlaysWith(null);
         host.setState(Player.State.DEFAULT);
-        playerRepository.save(host);
+        //playerRepository.save(host);
 
         var clientId = session.getClientId();
         if (clientId != null) {
             var client = playerRepository.findById(clientId).get();
             client.setPlaysWith(null);
             client.setState(Player.State.DEFAULT);
-            playerRepository.save(client);
+            //playerRepository.save(client);
 
             onAnswer.accept(new ServiceAnswer("Оппонент покинул игру. Вы отключены от сессии.", session.otherPlayer(playerId), null));
         }

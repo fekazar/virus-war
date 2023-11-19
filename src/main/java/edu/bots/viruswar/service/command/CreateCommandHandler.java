@@ -4,7 +4,6 @@ import edu.bots.viruswar.game.GameUtils;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.model.Session;
 import edu.bots.viruswar.repository.SessionRepository;
-import jakarta.transaction.Transactional;
 
 import java.util.function.Consumer;
 
@@ -18,7 +17,6 @@ public class CreateCommandHandler implements CommandHandler {
     }
 
     @Override
-    @Transactional
     public void handle(Long playerId, String command, Consumer<ServiceAnswer> onAnswer) {
         var sessionOpt = sessionRepository.findByPlayerId(playerId);
         if (sessionOpt.isPresent()) {

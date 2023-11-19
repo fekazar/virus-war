@@ -4,6 +4,7 @@ package edu.bots.viruswar.service.command;
 import edu.bots.viruswar.model.Player;
 import edu.bots.viruswar.model.ServiceAnswer;
 import edu.bots.viruswar.repository.PlayerRepository;
+import jakarta.transaction.Transactional;
 
 import java.util.function.Consumer;
 
