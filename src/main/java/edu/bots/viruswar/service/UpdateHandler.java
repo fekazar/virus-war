@@ -29,7 +29,7 @@ public class UpdateHandler {
     private final ExecutorService messagesThreadPool;
 
     public UpdateHandler(Map<String, CommandHandler> commandHandlers,
-                         Map<Player.State, StateHandler> stateHandlers,
+                         @Qualifier("stateHandlers") Map<Player.State, StateHandler> stateHandlers,
                          PlayerRepository playerRepository,
                          @Qualifier("updateHandlerThreadPool") ExecutorService messagesThreadPool) {
         this.commandHandlers = commandHandlers;
@@ -60,8 +60,9 @@ public class UpdateHandler {
 
             var msg = update.message().text().trim();
 
-            // omg, java 21
-            var commandOpt = Optional.ofNullable(List.of(update.message().entities()).getFirst());
+            Optional<MessageEntity> commandOpt = update.message().entities() == null ? Optional.empty() : Arrays.stream(update.message().entities())
+                    .filter(messageEntity -> messageEntity.type().equals(MessageEntity.Type.bot_command))
+                    .findAny();
 
             if (commandOpt.isPresent()) {
                 var comEntity = commandOpt.get();
